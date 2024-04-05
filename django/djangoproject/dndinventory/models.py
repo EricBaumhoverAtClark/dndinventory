@@ -4,6 +4,8 @@ from django.db import models
 from django.db.models import Model 
 from django.core.validators import MaxValueValidator, MinValueValidator, StepValueValidator
 from datetime import datetime
+from django.contrib.auth.models import User
+
 
 def coin_string(amount):
     out = ""
@@ -30,12 +32,20 @@ def coin_string(amount):
        
     return out
 
+# DO NOT REMOVE! NEEDED FOR MIGRATIONS
+def get_admin():
+    return 1
+
 class Character(models.Model):
     name = models.CharField(max_length=100, null=False)
+    
+    user = models.ForeignKey(
+        User, null=False, on_delete=models.CASCADE, db_index=True
+    )
 
     def __str__(self):
-        return "<Character \"{}\" id={}>".format(
-            self.name, self.id
+        return "<Character \"{}\" belonging to \"{}\">".format(
+            self.name, self.user.username
         )
 
 
@@ -95,7 +105,7 @@ class Equipment(models.Model):
         
 class EquipmentProperty(models.Model):
     id        = models.AutoField (primary_key=True)
-    equipment = models.ForeignKey(Equipment, null=False, on_delete=models.CASCADE)
+    equipment = models.ForeignKey(Equipment, null=False, on_delete=models.CASCADE, db_index=True)
     property  = models.CharField (max_length=20, null=False)
     value     = models.CharField (max_length=20, null=True)
 
@@ -107,15 +117,16 @@ class EquipmentProperty(models.Model):
             )
         ]
 
-
-    def save(self, *args, **kwargs):
-         if not self.value:
-              self.value = None
-         super(EquipmentProperty, self).save(*args, **kwargs)
     def __str__(self):
         if self.value != None:
             return f"<Equipment Property of \"{self.equipment.category} - {self.equipment.name}\" : {self.property} = {self.value}>"
         return f"<Equipment Property of \"{self.equipment.category} - {self.equipment.name}\" : {self.property}>"
+        
+    
+    def save(self, *args, **kwargs):
+         if not self.value:
+              self.value = None
+         super(EquipmentProperty, self).save(*args, **kwargs)
         
 class Weapon(models.Model):
     equipment  = models.OneToOneField(Equipment, on_delete=models.CASCADE, primary_key=True)
@@ -139,13 +150,22 @@ class Weapon(models.Model):
     )
     strength   = models.BooleanField(null=False, default=False)
     dexterity  = models.BooleanField(null=False, default=False)
+    
+    def get_modifier(self):
+        if not self.strength:
+            return "DEX"
+        if not self.dexterity:
+            return "STR"
+        return "STR or DEX"
+    
+    modifier = property(get_modifier)
 
     def __str__(self):
         return f"<Weapon \"{self.equipment.category} - {self.equipment.name}\" : {self.die_rolls}d{self.damage_die}>"
 
 class Item(models.Model):
     inventory = models.ForeignKey(
-        Inventory, null=False, on_delete=models.CASCADE
+        Inventory, null=False, on_delete=models.CASCADE, db_index=True
     )
     equipment = models.ForeignKey(
         Equipment, null=True, on_delete=models.SET_NULL
@@ -157,21 +177,6 @@ class Item(models.Model):
     
     custom_price  = models.DecimalField(max_digits=8, decimal_places=4, null=True)
     custom_weight = models.DecimalField(max_digits=4, decimal_places=1, null=True)
-    
-    def save(self, *args, **kwargs):
-         no_equipment = False
-         if not self.equipment:
-              no_equipment = True
-              self.equipment = None
-         if not self.custom_category:
-              self.custom_category = "Custom" if no_equipment else None
-         if not self.custom_name:
-              self.custom_name = "Item" if no_equipment else None
-         if not self.custom_price:
-              self.custom_price = None
-         if not self.custom_weight:
-              self.custom_weight = None
-         super(Item, self).save(*args, **kwargs)
     
     def get_category(self):
         if self.custom_category != None:
@@ -209,8 +214,13 @@ class Item(models.Model):
         return 0
     
     price  = property(get_price)
-    coins  = property(get_coins)
     weight = property(get_weight)
+    
+    coins  = property(get_coins)
+    
+    def __str__(self):
+        return f"<Item \"{self.get_category()} - {self.get_name()}\" of Character \"{self.inventory.character.name}\" in \"{self.inventory.name}\" acquired on {self.date_acquired.date()}>"
+
     
     def get_properties(self):
         if self.equipment == None:
@@ -218,6 +228,31 @@ class Item(models.Model):
         return self.equipment.properties
         
     properties = property(get_properties)
-
-    def __str__(self):
-        return f"<Item \"{self.get_category()} - {self.get_name()}\" of Character \"{self.inventory.character.name}\" in \"{self.inventory.name}\" acquired on {self.date_acquired.date()}>"
+    
+    def get_weapon(self):
+        if self.equipment == None:
+            return None
+        return Weapon.objects.get(pk=self.equipment)
+        
+    def has_weapon_stats(self):
+        if self.equipment == None:
+            return False
+        return Weapon.objects.filter(equipment=self.equipment).exists()
+        
+    weapon = property(get_weapon)
+    is_weapon = property(has_weapon_stats)
+    
+    def save(self, *args, **kwargs):
+         no_equipment = False
+         if not self.equipment:
+              no_equipment = True
+              self.equipment = None
+         if not self.custom_category:
+              self.custom_category = "Custom" if no_equipment else None
+         if not self.custom_name:
+              self.custom_name = "Item" if no_equipment else None
+         if not self.custom_price:
+              self.custom_price = None
+         if not self.custom_weight:
+              self.custom_weight = None
+         super(Item, self).save(*args, **kwargs)
