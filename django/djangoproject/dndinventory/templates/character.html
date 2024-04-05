@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{character.name}}'s Character Page{% endblock %}
+
+{% block container %}
+<div class="content">
+
+<div class="character">
+
+<h1>{{character.name}}'s Character Page</h1>
+
+{% for inventory in inventories %}
+<div class="inventory"> 
+	<h2 class="inventory-name">{{inventory.name}}</h2>
+	<ul>
+	{% for item in inventory.items %}
+	<li class="item">
+		<h3 class="item-name">{{item.name}}
+			{% for property in item.properties %}
+				<img class="property" src="/static/dndinventory/{{property.property}}.png" alt="{{property.property}}">
+			{% endfor %}
+		</h3>
+		<p class="item-category">{{item.category}}</p>
+		<p class="item-stats">Costs {{item.coins}} - {{item.weight}}lbs</p>
+	</li>
+	{% endfor %}
+	</ul>
+</div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}
