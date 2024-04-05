@@ -172,6 +172,13 @@ class Item(models.Model):
     )
     date_acquired = models.DateTimeField(default=datetime.now, blank=True)
     
+    quantity = models.IntegerField(
+        null=False, default=1, 
+        validators=[
+            MinValueValidator(1)
+        ]
+    )
+    
     custom_category = models.CharField(max_length=100, null=True)
     custom_name     = models.CharField(max_length=100, null=True)
     
@@ -204,7 +211,7 @@ class Item(models.Model):
         return 0
         
     def get_coins(self):
-        return coin_string(self.get_price())
+        return coin_string(self.get_price() * self.quantity)
         
     def get_weight(self):
         if self.custom_weight != None:
