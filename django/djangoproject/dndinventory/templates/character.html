@@ -23,7 +23,7 @@
 		<p class="item-category">{{item.category}}</p>
 		<p class="item-stats">{{item.quantity}} Item(s) - Costs {{item.coins}} - {{item.weight}}lbs</p>
 		{% if item.is_weapon %}
-		<p class="weapon">Deals {{item.weapon.die_rolls}}d{{item.weapon.damage_die}} + {{item.weapon.modifier}} Damage</p>
+		<p class="weapon">Deals {{item.weapon.damage}} Damage</p>
 		{% endif %}
 	</li>
 	{% endfor %}

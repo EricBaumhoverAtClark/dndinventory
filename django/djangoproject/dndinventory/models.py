@@ -144,8 +144,7 @@ class Weapon(models.Model):
         default=6, 
         validators=[
             MaxValueValidator(12),
-            MinValueValidator(2),
-            StepValueValidator(limit_value=2)
+            MinValueValidator(0)
         ]
     )
     strength   = models.BooleanField(null=False, default=False)
@@ -159,9 +158,29 @@ class Weapon(models.Model):
         return "STR or DEX"
     
     modifier = property(get_modifier)
+    
+    def get_dice(self):
+        if self.damage_die <= 0:
+            return "None"
+        if self.die_rolls < 1:
+            return f"{self.damage_die}"
+            
+        return f"{self.die_rolls}d{self.damage_die}"
+        
+    dice = property(get_dice)
+
+    def get_damage(self):
+        if self.damage_die <= 0:
+            return "None"
+        if self.die_rolls < 1:
+            return f"{self.damage_die}"
+            
+        return f"{self.die_rolls}d{self.damage_die} + " + self.get_modifier()
+        
+    damage = property(get_damage)
 
     def __str__(self):
-        return f"<Weapon \"{self.equipment.category} - {self.equipment.name}\" : {self.die_rolls}d{self.damage_die}>"
+        return f"<Weapon \"{self.equipment.category} - {self.equipment.name}\" : {self.get_damage()}>"
 
 class Item(models.Model):
     inventory = models.ForeignKey(
