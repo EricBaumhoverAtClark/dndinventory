@@ -53,10 +53,15 @@ class Inventory(models.Model):
     character = models.ForeignKey(
         Character, null=False, on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=40, null=False, default="Inventory", unique=True)
+    name = models.CharField(max_length=40, null=False, default="Inventory")
 
     class Meta:
         verbose_name_plural = "Inventories"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['character', 'name'], name='combination_character_inventory_name'
+            )
+        ]
 
     def __str__(self):
         return f"<Inventory \"{self.name}\" of character \"{self.character.name}\">"
