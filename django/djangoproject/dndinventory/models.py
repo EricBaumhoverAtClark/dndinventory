@@ -189,6 +189,9 @@ class Item(models.Model):
     equipment = models.ForeignKey(
         Equipment, null=True, on_delete=models.SET_NULL
     )
+    
+    order = models.IntegerField(blank = True, null = True)
+    
     date_acquired = models.DateTimeField(default=datetime.now, blank=True)
     
     quantity = models.IntegerField(
@@ -203,6 +206,9 @@ class Item(models.Model):
     
     custom_price  = models.DecimalField(max_digits=8, decimal_places=4, null=True)
     custom_weight = models.DecimalField(max_digits=4, decimal_places=1, null=True)
+    
+    class Meta:
+        ordering = ('order',)
     
     def get_category(self):
         if self.custom_category != None:
