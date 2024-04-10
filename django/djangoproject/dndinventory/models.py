@@ -42,6 +42,11 @@ class Character(models.Model):
     user = models.ForeignKey(
         User, null=False, on_delete=models.CASCADE, db_index=True
     )
+    
+    def get_inventories(self):
+        return Inventory.objects.filter(character=self)
+        
+    inventories = property(get_inventories)
 
     def __str__(self):
         return "<Character \"{}\" belonging to \"{}\">".format(
@@ -77,7 +82,7 @@ class Equipment(models.Model):
     category = models.CharField(max_length=100, null=False)
     name = models.CharField(max_length=100, null=False)
     price = models.DecimalField(max_digits=8, decimal_places=2, null=False, default=0)
-    weight = models.DecimalField(max_digits=4, decimal_places=1, null=False, default=0)
+    weight = models.DecimalField(max_digits=8, decimal_places=1, null=False, default=0)
 
     class Meta:
         verbose_name_plural = "Equipment"
@@ -210,7 +215,7 @@ class Item(models.Model):
     custom_name     = models.CharField(max_length=100, null=True)
     
     custom_price  = models.DecimalField(max_digits=8, decimal_places=4, null=True)
-    custom_weight = models.DecimalField(max_digits=4, decimal_places=1, null=True)
+    custom_weight = models.DecimalField(max_digits=8, decimal_places=1, null=True)
     
     class Meta:
         ordering = ('order',)
