@@ -4,7 +4,19 @@ from .models import Character, Inventory, Item, Equipment, EquipmentProperty, We
 
 admin.site.register(Character)
 admin.site.register(Inventory)
-admin.site.register(Equipment)
+
+
+
+class EquipmentAdmin(admin.ModelAdmin):
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(EquipmentAdmin, self).get_form(request, obj, **kwargs)
+        form.base_fields['description'].required = False
+        return form
+
+admin.site.register(Equipment, EquipmentAdmin)
+
+
 admin.site.register(Weapon)
 
 class ItemAdmin(admin.ModelAdmin):

@@ -81,6 +81,7 @@ class Equipment(models.Model):
     #TODO Add unique constraint on both.
     category = models.CharField(max_length=100, null=False)
     name = models.CharField(max_length=100, null=False)
+    description = models.CharField(max_length=360, null=True)
     price = models.DecimalField(max_digits=8, decimal_places=2, null=False, default=0)
     weight = models.DecimalField(max_digits=8, decimal_places=1, null=False, default=0)
 
@@ -112,6 +113,17 @@ class Equipment(models.Model):
         return EquipmentProperty.objects.filter(equipment=self)
         
     properties = property(get_properties)
+    
+    def equipment_has_description(self):
+        return self.description != None
+        
+    has_description = property(equipment_has_description)
+     
+    
+    def save(self, *args, **kwargs):
+         if not self.description:
+              self.description = None
+         super(Equipment, self).save(*args, **kwargs)
         
 class EquipmentProperty(models.Model):
     id        = models.AutoField (primary_key=True)
@@ -283,6 +295,18 @@ class Item(models.Model):
         
     weapon = property(get_weapon)
     is_weapon = property(has_weapon_stats)
+    
+    def item_has_description(self):
+        return self.equipment != None and self.equipment.description != None
+        
+    has_description = property(item_has_description)
+    
+    def get_item_description(self):
+        if not self.item_has_description():
+            return ""
+        return self.equipment.description
+        
+    description = property(get_item_description)
     
     def save(self, *args, **kwargs):
          no_equipment = False
