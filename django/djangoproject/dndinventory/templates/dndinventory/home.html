@@ -1,0 +1,23 @@
+<!-- templates/home.html-->
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block container %}
+{% if user.is_authenticated %}
+<form action="{% url 'logout' %}" method="post">
+  {% csrf_token %}
+  <button type="submit">Log Out</button>
+</form>
+<p><a href="{% url 'password_change' %}">Password Change</a></p>
+Welcome {{ user.username }}!
+{% for character in characters %}
+<div class="character"> 
+	<a href="{% url 'character' id=character.id %}">{{ character.name }}</a>
+</div>
+{% endfor %}
+{% else %}
+<p>You are not logged in</p>
+<a href="{% url 'login' %}">Log In</a>
+{% endif %}
+{% endblock %}

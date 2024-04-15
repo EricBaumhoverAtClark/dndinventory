@@ -18,7 +18,8 @@ from django.shortcuts import redirect
 from django.urls import include, path
 
 urlpatterns = [
-    path('', lambda req: redirect('admin/')),
     path('admin/', admin.site.urls),
-    path('dnd/', include('dndinventory.urls')),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path('', include('dndinventory.urls')),
 ]
+
