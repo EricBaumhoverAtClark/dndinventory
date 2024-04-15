@@ -1,0 +1,12 @@
+{% load static %}
+<html>
+<head>
+	<title>{% block title %}{% endblock %}</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+	<link rel="stylesheet" href="{% static 'dndinventory/styles.css' %}">
+</head>
+<body>
+{% block container %}{% endblock %}
+</body>
+</html>
+
