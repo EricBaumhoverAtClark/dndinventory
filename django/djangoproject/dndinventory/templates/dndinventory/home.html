@@ -18,6 +18,11 @@ Welcome {{ user.username }}!
 {% endfor %}
 {% else %}
 <p>You are not logged in</p>
+<div>
 <a href="{% url 'login' %}">Log In</a>
+</div>
+<div>
+<a href="{% url 'signup' %}">Signup</a>
+</div>
 {% endif %}
 {% endblock %}
