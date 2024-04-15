@@ -1,0 +1,15 @@
+<li class="item">
+	<h3 class="item-name">{{item.name}}
+		{% for property in item.properties %}
+			<img class="property" src="/static/dndinventory/{{property.property}}.png" alt="{{property.property}}">
+		{% endfor %}
+	</h3>
+	<p class="item-category">{{item.category}}</p>
+	<p class="item-stats">{{item.quantity}} Item(s) - Costs {{item.coins}} - {{item.weight}}lbs</p>
+	{% if item.is_weapon %}
+	<p class="weapon">Deals {{item.weapon.damage}} Damage</p>
+	{% endif %}
+	{% if item.has_description %}
+	<p class="weapon">{{item.description}}</p>
+	{% endif %}
+</li>
