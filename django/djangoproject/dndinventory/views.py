@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
+from django.http import HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
@@ -10,6 +11,25 @@ from .models import Character, Inventory, Item, Equipment
 
 def character(request, id):
     chr = Character.objects.get(pk=id)
+    inventory = request.GET.get('inventory',0)
+    
+    print(inventory)
+    
+    if inventory:
+        
+        print("!!!1")
+        inventory_object = Inventory.objects.get(pk=inventory)
+        
+        equipment = request.GET.get('equipment','')
+        if equipment:
+            print("!!!2")
+            equipment_object = Equipment.objects.get(pk=equipment)
+        
+            print("!!!3")
+            new_item = Item(inventory=inventory_object, equipment=equipment_object)
+            new_item.save()
+            
+        return redirect(to="character", id=id)
     
     context = {"character": chr}
     return render(request, "dndinventory/character.html", context)

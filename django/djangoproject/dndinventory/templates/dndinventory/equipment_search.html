@@ -1,12 +1,5 @@
-{% extends "base.html" %}
-<!-- partial_search.html -->
-
-
-{% block title %}Equipment Search{% endblock %}
-
-
-{% block container %}
-<input name="q"
+<label for="q">Equipment</label><br>
+<input id="q" name="q"
        placeholder="Search for a title"
        hx-get="{% url 'equipment_search' %}"
        hx-target="#results"
@@ -17,5 +10,4 @@
         {% include 'dndinventory/equipment_results.html' %}
     </div>
 </section>
-{% endblock %}
 
