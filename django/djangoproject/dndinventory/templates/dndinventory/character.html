@@ -19,6 +19,21 @@
 	</ul>
 </div>
 {% endfor %}
+<h2>Add Item</h2>
+<form>
+	<label>Inventory</label><br>
+	<select id="inventory-select" name="inventory">
+	{% for inventory in character.inventories %}
+	<option value="{{inventory.id}}"> 
+		{{inventory.name}}
+	</option>
+	{% endfor %}
+	</select>
+	<div>
+	{% include "dndinventory/equipment_search.html" %}   
+	</div>
+	<input type="submit" value="Add">
+</form>
 </div>
 </div>
 {% endblock %}
