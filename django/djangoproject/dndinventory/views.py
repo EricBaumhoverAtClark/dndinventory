@@ -1,17 +1,38 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
 
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
 
-from .models import Character, Inventory, Item
+from .models import Character, Inventory, Item, Equipment
 
 def character(request, id):
     chr = Character.objects.get(pk=id)
     
     context = {"character": chr}
     return render(request, "dndinventory/character.html", context)
+    
+def search_equipment(request):
+    if request.htmx:
+        search = request.GET.get('q')
+        page_num = request.GET.get('page', 1)
+
+        if search:
+            equipment = Equipment.objects.filter(name__icontains=search) | Equipment.objects.filter(category__icontains=search)
+        else:
+            equipment = Equipment.objects.none()
+        page = Paginator(object_list=equipment, per_page=5).get_page(page_num)
+
+        return render(
+          request=request,
+          template_name='dndinventory/equipment_results.html',
+          context={
+              'page': page
+          }
+        )
+    return render(request, 'dndinventory/equipment_search.html')
     
 def home(request):
 
