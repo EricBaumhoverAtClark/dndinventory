@@ -57,7 +57,26 @@ def search_equipment(request):
           }
         )
     return render(request, 'dndinventory/equipment_search.html')
+
+def customize_item(request, character_id, item_id, property):
     
+    if request.user.is_authenticated:
+
+        character = Character.objects.get(pk=character_id)
+        
+        if character.user == request.user:
+
+            item = Item.objects.get(pk=item_id)
+
+            if item.inventory.character == character:
+
+                setattr(item, property, request.POST.get(property, getattr(item, property)))
+                item.save()
+
+
+
+    return redirect(to="character", id=character_id)
+
 def home(request):
 
     if request.user.is_authenticated:

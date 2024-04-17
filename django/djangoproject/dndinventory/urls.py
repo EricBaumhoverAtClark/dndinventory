@@ -10,5 +10,5 @@ urlpatterns = [
     path("accounts/signup/", views.signup.as_view(), name="signup"),
     path("search/", views.search_equipment, name="search"),
     path("equipment-search/", views.search_equipment, name="equipment_search"),
+    path("customize-item/<int:character_id>/<int:item_id>/<slug:property>/", views.customize_item, name="customize_item"),
 ]
-

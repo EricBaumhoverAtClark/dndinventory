@@ -1,5 +1,11 @@
 <li class="item">
-	<h3 class="item-name">{{item.name}}
+	<h3 class="item-name">
+		<form action="{% url 'customize_item' character_id=character.id item_id=item.id property='custom_name' %}" method="post">
+			{% csrf_token %}
+			<input  name="custom_name" 
+					value="{{item.name}}">
+			</input>
+		</form>
 		{% for property in item.properties %}
 			<img class="property" src="/static/dndinventory/{{property.property}}.png" alt="{{property.property}}">
 		{% endfor %}
