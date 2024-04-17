@@ -17,19 +17,23 @@ def character(request, id):
     
     if inventory:
         
-        print("!!!1")
         inventory_object = Inventory.objects.get(pk=inventory)
         
         equipment = request.GET.get('equipment','')
         if equipment:
-            print("!!!2")
             equipment_object = Equipment.objects.get(pk=equipment)
         
-            print("!!!3")
             new_item = Item(inventory=inventory_object, equipment=equipment_object)
             new_item.save()
             
         return redirect(to="character", id=id)
+    
+    item_id = request.GET.get('item_id', 0)
+
+    if item_id:
+        Item.objects.get(pk=item_id).delete()
+        return redirect(to="character", id=id)
+
     
     context = {"character": chr}
     return render(request, "dndinventory/character.html", context)

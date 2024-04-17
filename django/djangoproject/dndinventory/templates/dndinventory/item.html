@@ -12,4 +12,8 @@
 	{% if item.has_description %}
 	<p class="weapon">{{item.description}}</p>
 	{% endif %}
+	<form>
+		<input type="hidden" name="item_id" value="{{item.id}}"></input>
+		<input type="submit" value="Remove">
+	</form>
 </li>
