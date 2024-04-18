@@ -17,17 +17,32 @@ def character(request, id):
     print(inventory)
     
     if inventory:
-        
-        inventory_object = Inventory.objects.get(pk=inventory)
-        
-        equipment = request.GET.get('equipment','')
-        if equipment:
-            equipment_object = Equipment.objects.get(pk=equipment)
-        
-            new_item = Item(inventory=inventory_object, equipment=equipment_object)
-            new_item.save()
+        try:
+            inventory_object = Inventory.objects.get(pk=inventory)
             
+            equipment = request.GET.get('equipment','')
+            custom_name = request.GET.get('custom_name', "")
+            if equipment:
+                equipment_object = Equipment.objects.get(pk=equipment)
+            
+                new_item = Item(inventory=inventory_object, equipment=equipment_object)
+                new_item.save()
+
+            elif custom_name:
+                custom_category = request.GET.get('custom_category', "")
+                custom_price = request.GET.get('custom_price', 0)
+                custom_weight = request.GET.get('custom_weight', 0)
+
+                new_item = Item(inventory=inventory_object, custom_name=custom_name, custom_category=custom_category, custom_price=custom_price, custom_weight=custom_weight)
+                new_item.save()
+        except:
+            # TODO Error
+            return redirect(to="home")
+
         return redirect(to="character", id=id)
+    
+    
+
     
     item_id = request.GET.get('item_id', 0)
 
