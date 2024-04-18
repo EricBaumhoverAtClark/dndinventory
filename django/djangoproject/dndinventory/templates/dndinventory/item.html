@@ -1,8 +1,8 @@
 <li class="item">
-	<h3 class="item-name">
+	<h3>
 		<form action="{% url 'customize_item' character_id=character.id item_id=item.id property='custom_name' %}" method="post">
 			{% csrf_token %}
-			<input  name="custom_name" 
+			<input class="item-name" name="custom_name" 
 					value="{{item.name}}">
 			</input>
 		</form>
@@ -10,7 +10,31 @@
 			<img class="property" src="/static/dndinventory/{{property.property}}.png" alt="{{property.property}}">
 		{% endfor %}
 	</h3>
-	<p class="item-category">{{item.category}}</p>
+	<form action="{% url 'customize_item' character_id=character.id item_id=item.id property='custom_category' %}" method="post">
+		{% csrf_token %}
+		<input class="item-category" name="custom_category" 
+				value="{{item.category}}">
+		</input>
+	</form>
+	<form action="{% url 'customize_item' character_id=character.id item_id=item.id property='quantity' %}" method="post">
+		{% csrf_token %}
+		<input class="item-stats" name="quantity" 
+				value="{{item.quantity}}">
+		</input>
+	</form>
+	
+	<form action="{% url 'customize_item' character_id=character.id item_id=item.id property='custom_price' %}" method="post">
+		{% csrf_token %}
+		<input class="item-stats" name="custom_price" 
+				value="{{item.price}}">
+		</input>
+	</form>
+	<form action="{% url 'customize_item' character_id=character.id item_id=item.id property='custom_weight' %}" method="post">
+		{% csrf_token %}
+		<input class="item-stats" name="custom_weight" 
+				value="{{item.weight}}">
+		</input>
+	</form>
 	<p class="item-stats">{{item.quantity}} Item(s) - Costs {{item.coins}} - {{item.weight}}lbs</p>
 	{% if item.is_weapon %}
 	<p class="weapon">Deals {{item.weapon.damage}} Damage</p>

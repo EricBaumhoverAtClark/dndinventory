@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
+from django.db.models.fields import IntegerField, DecimalField
 
 
 from .models import Character, Inventory, Item, Equipment
@@ -69,6 +70,12 @@ def customize_item(request, character_id, item_id, property):
             item = Item.objects.get(pk=item_id)
 
             if item.inventory.character == character:
+
+                if Item._meta.get_field(property).get_internal_type() == IntegerField:
+                    property = int(property)
+
+                if Item._meta.get_field(property).get_internal_type() == DecimalField:
+                    property = float(property)
 
                 setattr(item, property, request.POST.get(property, getattr(item, property)))
                 item.save()
