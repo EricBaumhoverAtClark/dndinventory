@@ -19,7 +19,7 @@
 	</ul>
 </div>
 {% endfor %}
-<h2>Add Item</h2>
+<h2>Add Item from Existing</h2>
 <form>
 	<label>Inventory</label><br>
 	<select id="inventory-select" name="inventory">
@@ -31,6 +31,44 @@
 	</select>
 	<div>
 	{% include "dndinventory/equipment_search.html" %}   
+	</div>
+	<input type="submit" value="Add">
+</form>
+<h2>Add Custom Item</h2>
+<form>
+	<label>Inventory</label><br>
+	<select id="inventory-select" name="inventory">
+	{% for inventory in character.inventories %}
+	<option value="{{inventory.id}}"> 
+		{{inventory.name}}
+	</option>
+	{% endfor %}
+	</select>
+	<div>
+		<label> Item Name: 
+			<input class="custom-item-name" name="custom_name" 
+					value="Item">
+			</input>
+		</label>
+		<br>
+		<label> Item Category: 
+			<input class="custom-item-category" name="custom_category" 
+					value="Custom Items">
+			</input>
+		</label>
+		<br>
+		<label> Item Price: 
+			<input type="number" class="custom-item-price" name="custom_price" 
+					value="0">
+			</input>
+		</label>
+		<br>
+		<label> Item Weight: 
+			<input type="number" class="custom-item-weight" name="custom_weight" 
+					value="0">
+			</input>
+		</label>
+		<br>
 	</div>
 	<input type="submit" value="Add">
 </form>

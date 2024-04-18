@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
+from django.db.models.fields import IntegerField, DecimalField
 
 
 from .models import Character, Inventory, Item, Equipment
@@ -16,17 +17,32 @@ def character(request, id):
     print(inventory)
     
     if inventory:
-        
-        inventory_object = Inventory.objects.get(pk=inventory)
-        
-        equipment = request.GET.get('equipment','')
-        if equipment:
-            equipment_object = Equipment.objects.get(pk=equipment)
-        
-            new_item = Item(inventory=inventory_object, equipment=equipment_object)
-            new_item.save()
+        try:
+            inventory_object = Inventory.objects.get(pk=inventory)
             
+            equipment = request.GET.get('equipment','')
+            custom_name = request.GET.get('custom_name', "")
+            if equipment:
+                equipment_object = Equipment.objects.get(pk=equipment)
+            
+                new_item = Item(inventory=inventory_object, equipment=equipment_object)
+                new_item.save()
+
+            elif custom_name:
+                custom_category = request.GET.get('custom_category', "")
+                custom_price = request.GET.get('custom_price', 0)
+                custom_weight = request.GET.get('custom_weight', 0)
+
+                new_item = Item(inventory=inventory_object, custom_name=custom_name, custom_category=custom_category, custom_price=custom_price, custom_weight=custom_weight)
+                new_item.save()
+        except:
+            # TODO Error
+            return redirect(to="home")
+
         return redirect(to="character", id=id)
+    
+    
+
     
     item_id = request.GET.get('item_id', 0)
 
@@ -69,6 +85,12 @@ def customize_item(request, character_id, item_id, property):
             item = Item.objects.get(pk=item_id)
 
             if item.inventory.character == character:
+
+                if Item._meta.get_field(property).get_internal_type() == IntegerField:
+                    property = int(property)
+
+                if Item._meta.get_field(property).get_internal_type() == DecimalField:
+                    property = float(property)
 
                 setattr(item, property, request.POST.get(property, getattr(item, property)))
                 item.save()
