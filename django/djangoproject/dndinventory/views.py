@@ -87,6 +87,15 @@ def home(request):
     else:
         return render(request, "dndinventory/home.html", {})
 
+def user(request):
+
+    if request.user.is_authenticated:
+        characters = Character.objects.filter(user=request.user)
+    
+        context = {"characters": characters}
+        return render(request, "dndinventory/user.html", context)
+    else:
+        return render(request, "dndinventory/user.html", {})
 
 class signup(CreateView):
     form_class = UserCreationForm

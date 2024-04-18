@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}User{% endblock %}
+{% block container %}
+{% if user.is_authenticated %}
+<form action="{% url 'logout' %}" method="post">
+  {% csrf_token %}
+  <button type="submit">Log Out</button>
+</form>
+<p><a href="{% url 'password_change' %}">Password Change</a></p>
+Welcome {{ user.username }}!
+{% for character in characters %}
+<div class="character"> 
+	<a href="{% url 'character' id=character.id %}">{{ character.name }}</a>
+</div>
+{% endfor %}
+{% else %}
+<p>You are not logged in</p>
+<div>
+<a href="{% url 'login' %}">Log In</a>
+</div>
+<div>
+<a href="{% url 'signup' %}">Signup</a>
+</div>
+{% endif %}
+{% endblock %}
