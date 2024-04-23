@@ -12,8 +12,17 @@ Welcome {{ user.username }}!
 {% for character in characters %}
 <div class="character"> 
 	<a href="{% url 'character' id=character.id %}">{{ character.name }}</a>
+  <form>
+		<input type="hidden" name="character_id" value="{{character.id}}"></input>
+		<input type="submit" value="Delete"></input>
+	</form>
 </div>
 {% endfor %}
+<form>
+	<label>Character Name</label><br>
+  <input value="" name="character_name">
+	<input type="submit" value="Add">
+</form>
 {% else %}
 <p>You are not logged in</p>
 <div>

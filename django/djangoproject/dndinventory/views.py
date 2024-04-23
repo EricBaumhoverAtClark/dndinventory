@@ -109,15 +109,36 @@ def home(request):
     else:
         return render(request, "dndinventory/home.html", {})
 
+# creating characters    
+def create_character(request, character_name):
+    # creates character and should insert into table
+    new_character = Character.objects.create(name = character_name, user = request.user)
+    return redirect(to="character", id=new_character.pk)
+        
+
+# deleting characters
+def delete_character(request, character_id):
+    if request.user.is_authenticated:
+        # deletes character
+        Character.objects.filter(pk=character_id).delete()
+        # returns to user page
+
+
 def user(request):
 
     if request.user.is_authenticated:
         characters = Character.objects.filter(user=request.user)
-    
+        character_id = request.GET.get('character_id',0)
+        character_name = request.GET.get('character_name')
         context = {"characters": characters}
+        if character_id:
+            delete_character(request, character_id)
+            return redirect(to="user",)
+        if character_name:
+            return create_character(request, character_name)
         return render(request, "dndinventory/user.html", context)
     else:
-        return render(request, "dndinventory/user.html", {})
+        return redirect(to="home",)
 
 class signup(CreateView):
     form_class = UserCreationForm
