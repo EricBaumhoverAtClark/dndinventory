@@ -8,10 +8,20 @@
 <div class="character">
 
 <h1>{{character.name}}'s Character Page</h1>
-
+<div>
+<form>
+	<label>Inventory Name</label><br>
+  	<input value="" name="inventory_name">
+	<input type="submit" value="Add">
+</form>
+<div>
 {% for inventory in character.inventories %}
 <div class="inventory"> 
 	<h2 class="inventory-name">{{inventory.name}}</h2>
+	<form>
+		<input type="hidden" name="inventory_id" value="{{inventory.id}}"></input>
+		<input type="submit" value="Delete"></input>
+	</form>
 	<ul>
 	{% for item in inventory.items %}
 		{% include "dndinventory/item.html" %}   

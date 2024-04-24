@@ -11,11 +11,8 @@
 </form>
 <p><a href="{% url 'password_change' %}">Password Change</a></p>
 Welcome {{ user.username }}!
-{% for character in characters %}
-<div class="character"> 
-	<a href="{% url 'character' id=character.id %}">{{ character.name }}</a>
-</div>
-{% endfor %}
+<div>
+<a href="user">User Page</a>
 {% else %}
 <p>You are not logged in</p>
 <div>

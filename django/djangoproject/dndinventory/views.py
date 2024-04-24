@@ -13,9 +13,17 @@ from .models import Character, Inventory, Item, Equipment
 def character(request, id):
     chr = Character.objects.get(pk=id)
     inventory = request.GET.get('inventory',0)
+    inventory_id = request.GET.get('inventory_id',0)
+    inventory_name = request.GET.get('inventory_name',)
     
     print(inventory)
-    
+    #creating
+    if inventory_name:
+        return create_inventory(request, inventory_name, chr)
+    #deleting
+    if inventory_id:
+        delete_inventory(request, inventory_id)
+        return redirect(to="character", id=id)
     if inventory:
         try:
             inventory_object = Inventory.objects.get(pk=inventory)
@@ -109,6 +117,7 @@ def home(request):
     else:
         return render(request, "dndinventory/home.html", {})
 
+
 # creating characters    
 def create_character(request, character_name):
     # creates character and should insert into table
@@ -121,8 +130,17 @@ def delete_character(request, character_id):
     if request.user.is_authenticated:
         # deletes character
         Character.objects.filter(pk=character_id).delete()
-        # returns to user page
 
+# creating inventory   
+def create_inventory(request, inventory_name, chr):
+    # creates inventory and should insert into table
+    new_inventory = Inventory.objects.create(character = chr, name = inventory_name)
+    return redirect(to="character", id=chr.pk)
+
+def delete_inventory(request, inventory_id):
+    if request.user.is_authenticated:
+        # deletes inventory
+        Inventory.objects.filter(pk=inventory_id).delete()
 
 def user(request):
 
